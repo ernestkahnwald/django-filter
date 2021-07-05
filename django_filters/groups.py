@@ -217,9 +217,15 @@ class CombinedGroup(BaseFilterGroup):
             return qs
 
         # Filter by combining the set of constructed Q objects.
-        qs = qs.filter(functools.reduce(self.combine, [
-            self.build_q_object(param, value)
-            for param, value in data.items()]))
+        qs = qs.filter(
+            functools.reduce(
+                self.combine,
+                [
+                    self.build_q_object(param, value)
+                    for param, value in data.items()
+                ],
+            ),
+        )
 
         # If any filter is marked as distinct, the qs should also be distinct.
         if any(self.parent.filters[param].distinct for param in data):

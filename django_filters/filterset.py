@@ -232,7 +232,12 @@ class BaseFilterSet:
         This method should be overridden if additional filtering needs to be
         applied to the queryset before it is cached.
         """
-        cleaned_data = self.form.cleaned_data.copy()
+        cleaned_data = {
+            field_name: field_value
+            for field_name, field_value in self.form.cleaned_data.items()
+            for changed_name in self.form.changed_data
+            if field_name == changed_name
+        }
 
         for group in self.groups:
             group_data, cleaned_data = group.extract_data(cleaned_data)
